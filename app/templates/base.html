@@ -5,28 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Business Management Dashboard{% endblock %}</title>
     
-    <!-- CSS -->
+    <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cart_style.css') }}">
-    
 </head>
+
 <body>
+    <!-- ================= Header ================= -->
     <header class="header">
-        <div class="container">
+        <div class="container header-flex">
             <h1>📊 Business Manager</h1>
-            <nav class="nav">
-                <a href="{{ url_for('tasks.dashboard') }}" {% if request.endpoint == 'tasks.dashboard' %}class="active"{% endif %}>Dashboard</a>
-                <a href="{{ url_for('tasks.all_client') }}" {% if request.endpoint == 'tasks.all_client' %}class="active"{% endif %}>Clients</a>
-                <a href="{{ url_for('tasks.all_worker') }}" {% if request.endpoint == 'tasks.all_worker' %}class="active"{% endif %}>Workers</a>
-                <a href="{{ url_for('tasks.raw_materials') }}" {% if request.endpoint == 'tasks.raw_materials' %}class="active"{% endif %}>Materials</a>
-                <a href="{{ url_for('auth.logout') }}" {% if request.endpoint == 'auth.logout' %}class="active"{% endif %}>Logout</a>
+
+            <!-- Hamburger Button (visible only on mobile) -->
+            <button class="menu-toggle" id="menuToggle">☰</button>
+
+            <!-- Navigation Menu -->
+            <nav class="nav" id="navbar">
+                <a href="{{ url_for('tasks.dashboard') }}" 
+                   {% if request.endpoint == 'tasks.dashboard' %}class="active"{% endif %}>Dashboard</a>
+
+                <a href="{{ url_for('tasks.all_client') }}" 
+                   {% if request.endpoint == 'tasks.all_client' %}class="active"{% endif %}>Clients</a>
+
+                <a href="{{ url_for('tasks.all_worker') }}" 
+                   {% if request.endpoint == 'tasks.all_worker' %}class="active"{% endif %}>Workers</a>
+
+                <a href="{{ url_for('tasks.raw_materials') }}" 
+                   {% if request.endpoint == 'tasks.raw_materials' %}class="active"{% endif %}>Materials</a>
+
+                <a href="{{ url_for('auth.logout') }}" 
+                   {% if request.endpoint == 'auth.logout' %}class="active"{% endif %}>Logout</a>
             </nav>
         </div>
     </header>
 
+    <!-- ================= Main ================= -->
     <main class="main">
         <div class="container">
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -41,8 +57,19 @@
         </div>
     </main>
 
-    <!-- JS -->
+    <!-- ================= Scripts ================= -->
     <script src="{{ url_for('static', filename='js/cart_show.js') }}"></script>
-    
+
+    <!-- Mobile Menu Toggle -->
+    <script>
+        const toggleBtn = document.getElementById('menuToggle');
+        const navbar = document.getElementById('navbar');
+
+        toggleBtn.addEventListener('click', () => {
+            navbar.classList.toggle('show');
+            // Toggle between ☰ and ✖
+            toggleBtn.textContent = navbar.classList.contains('show') ? '✖' : '☰';
+        });
+    </script>
 </body>
 </html>
