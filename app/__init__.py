@@ -12,7 +12,7 @@ def create_app() :
     app = Flask(__name__)
     app.config['SECRET_KEY'] = "9950"
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///company.db"
-    
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL_EXTERNAL")
     app.config['SQLALCHEMY_TRACK_NOTIFICATIONS'] = False
 
     #connecting the database
