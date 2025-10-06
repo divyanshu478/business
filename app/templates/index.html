@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Business Manager{% endblock %}
+
+{% block content %}
+
+<!-- ================= Summary Cards ================= -->
+<section class="summary-section">
+    <h2>Financial Overview</h2>
+    <div class="summary-grid">
+        <div class="summary-card">
+            <h3>💰 Total Sale</h3>
+            <p class="amount">₹{{ "{:,.2f}".format(summary.total_sale or 0) }}</p>
+        </div>
+        <div class="summary-card">
+            <h3>📈 Total Profit</h3>
+            <p class="amount">₹{{ "{:,.2f}".format(summary.total_profit or 0) }}</p>
+        </div>
+        <div class="summary-card">
+            <h3>⏰ Due Amount</h3>
+            <p class="amount due">₹{{ "{:,.2f}".format(summary.due_amount or 0) }}</p>
+        </div>
+        <div class="summary-card">
+            <h3>💸 Total Expenditure</h3>
+            <p class="amount">₹{{ "{:,.2f}".format(summary.total_expenditure or 0) }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- ================= Quick Actions ================= -->
+<section class="actions-section">
+    <h2>Quick Actions</h2>
+    <div class="actions-grid">
+        <!-- Add Client Order Button -->
+        <button type="button" class="action-btn" id="openCartBtn">
+            📦 Add Client Order
+        </button>
+
+        <!-- Client Order Popup Form -->
+        <div id="cartForm" class="cart-form">
+            <div class="cart-header">
+                <h3>Add Client Order</h3>
+                <span id="closeCartBtn" style="cursor:pointer;">✖</span>
+            </div>
+            <form method="POST" action="{{ url_for('tasks.add_client_order') }}">
+                <div class="form-group">
+                    <label for="client_name">Client Name:</label>
+                    <select name="client_name" id="client_name" required>
+                        <option value="">-- Select Client --</option>
+                        {% for client in clients %}
+                            <option value="{{ client.client_name }}">{{ client.client_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="item_name">Item Name:</label>
+                    <input type="text" id="item_name" name="item_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Optional..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="date">Order Date:</label>
+                    <input type="date" id="date" name="date" value="{{ today }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price per unit:</label>
+                    <input type="number" id="price" name="price" step="0.01" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💼 Add Client Order</button>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Add Client Payment Button -->
+        <button type="button" class="action-btn" id="openCartBtn_0">
+            💰 Add Client Payment
+        </button>
+
+        <!-- Client Payment Popup Form -->
+        <div id="cartForm_0" class="cart-form">
+            <div class="cart-header">
+                <h3>Add Client Payment</h3>
+                <span id="closeCartBtn_0" style="cursor:pointer;">✖</span>
+            </div>
+            <form method="POST" action="{{ url_for('tasks.add_client_payment') }}">
+                <div class="form-group">
+                    <label for="client_name_0">Client Name:</label>
+                    <select name="client_name_0" id="client_name_0" required>
+                        <option value="">-- Select Client --</option>
+                        {% for client in clients %}
+                            <option value="{{ client.client_name }}">{{ client.client_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date_0">Payment Date:</label>
+                    <input type="date" id="date_0" name="date_0" value="{{ today }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="mode_0">Payment Mode:</label>
+                    <select id="mode_0" name="mode_0" required>
+                        <option value="Online">Online</option>
+                        <option value="Cash">Cash</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description_0">Description:</label>
+                    <textarea id="description_0" name="description_0" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="amount_0">Amount:</label>
+                    <input type="number" id="amount_0" name="amount_0" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">💰 Add Payment</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Worker Work Button -->
+        <button type="button" class="action-btn" id="openCartBtn_1">
+            👷 Add Worker Work
+        </button>
+
+        <!-- Worker Work Popup Form -->
+        <div id="cartForm_1" class="cart-form">
+            <div class="cart-header">
+                <h3>Add Worker Work</h3>
+                <span id="closeCartBtn_1" style="cursor:pointer;">✖</span>
+            </div>
+            <form method="POST" action="{{ url_for('tasks.add_worker_work') }}">
+                <div class="form-group">
+                    <label for="worker_name_1">Worker Name:</label>
+                    <select name="worker_name_1" id="worker_name_1" required>
+                        <option value="">-- Select Worker --</option>
+                        {% for worker in workers %}
+                            <option value="{{ worker.client_name }}">{{ worker.client_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="item_name_1">Item Name:</label>
+                    <input type="text" id="item_name_1" name="item_name_1" required>
+                </div>
+                <div class="form-group">
+                    <label for="description_1">Description:</label>
+                    <textarea id="description_1" name="description_1" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="date_1">Work Date:</label>
+                    <input type="date" id="date_1" name="date_1" value="{{ today }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity_1">Quantity:</label>
+                    <input type="number" id="quantity_1" name="quantity_1" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="price_1">Rate per Unit:</label>
+                    <input type="number" id="price_1" name="price_1" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">👷 Add Worker Work</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Add Worker Payment Button -->
+<button type="button" class="action-btn" id="openCartBtn_2">
+    💵 Add Worker Payment
+</button>
+
+<!-- Worker Payment Popup Form -->
+<div id="cartForm_2" class="cart-form">
+    <div class="cart-header">
+        <h3>Add Worker Payment</h3>
+        <span id="closeCartBtn_2" style="cursor:pointer;">✖</span>
+    </div>
+    <form method="POST" action="{{ url_for('tasks.add_worker_payment') }}">
+        <div class="form-group">
+            <label for="worker_name_2">Worker Name:</label>
+            <select name="worker_name_2" id="worker_name_2" required>
+                <option value="">-- Select Worker --</option>
+                {% for worker in workers %}
+                    <option value="{{ worker.client_name }}">{{ worker.client_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date_2">Payment Date:</label>
+            <input type="date" id="date_2" name="date_2" value="{{ today }}" required>
+        </div>
+        <div class="form-group">
+            <label for="mode_2">Payment Mode:</label>
+            <select id="mode_2" name="mode_2" required>
+                <option value="Online">Online</option>
+                <option value="Cash">Cash</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="description_2">Description:</label>
+            <textarea id="description_2" name="description_2" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="amount_2">Amount:</label>
+            <input type="number" id="amount_2" name="amount_2" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">💵 Add Worker Payment</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+    </div>
+</section>
+
+<!-- ================= Lists Section ================= -->
+<section class="lists-section">
+    <div class="lists-grid">
+        <!-- Recent Clients -->
+        <div class="list-card">
+            <h3>📋 Recent Clients</h3>
+            <ul>
+                {% for client in recent_clients %}
+                    <li>
+                        <a style="text-decoration: none; font-size: 15px;" href="{{ url_for('tasks.show_client', name=client['name']) }}">
+                            <strong>{{ client['name'] }}</strong>
+                        </a>
+                        <small style="float: right; color: #666;">
+                            Due: ₹{{ "{:,.2f}".format(client['due_amount'] or 0) }}
+                        </small>
+                    </li>
+                {% else %}
+                    <li>No clients found</li>
+                {% endfor %}
+            </ul>
+            <a><button>View All</button></a>
+        </div>
+
+        <!-- Recent Workers -->
+        <div class="list-card">
+            <h3>👷 Recent Workers</h3>
+            <ul>
+                {% for worker in recent_workers %}
+                    <li>
+                        <a style="text-decoration: none; font-size: 15px;" href="{{ url_for('tasks.show_worker', name=worker['name']) }}">
+                            <strong>{{ worker['name'] }}</strong>
+                        </a>
+                        <small style="float: right; color: #666;">
+                            Remaining: ₹{{ "{:,.2f}".format(worker['due_amount'] or 0) }}
+                        </small>
+                    </li>
+                {% else %}
+                    <li>No workers found</li>
+                {% endfor %}
+            </ul>
+            <a><button>View All</button></a>
+        </div>
+    </div>
+</section>
+
+<!-- ================= Raw Materials ================= -->
+<section class="materials-section">
+    <h2>📦 Recent Raw Materials</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price/Unit</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in recent_materials %}
+                    <tr>
+                        <td>{{ material.name }}</td>
+                        <td>{{ material.date.strftime('%d/%m/%Y') if material.date else '-' }}</td>
+                        <td>{{ material.quantity }} {{ material.unit or '' }}</td>
+                        <td>₹{{ "{:,.2f}".format(material.price or 0) }}</td>
+                        <td>₹{{ "{:,.2f}".format((material.amount) if material.quantity and material.price else 0) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">No materials found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a style="display: inline-block; padding: 10px 20px; background-color: #FF6B6B; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center;" href="{{ url_for('tasks.raw_materials') }}">
+        View All Material Details
+    </a>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const openBtn = document.getElementById("openCartBtn");
+const closeBtn = document.getElementById("closeCartBtn");
+const cartForm = document.getElementById("cartForm");
+openBtn.addEventListener("click", () => cartForm.style.display = "block");
+closeBtn.addEventListener("click", () => cartForm.style.display = "none");
+
+const openBtn_1 = document.getElementById("openCartBtn_1");
+const closeBtn_1 = document.getElementById("closeCartBtn_1");
+const cartForm_1 = document.getElementById("cartForm_1");
+openBtn_1.addEventListener("click", () => cartForm_1.style.display = "block");
+closeBtn_1.addEventListener("click", () => cartForm_1.style.display = "none");
+
+const openBtn_0 = document.getElementById("openCartBtn_0");
+const closeBtn_0 = document.getElementById("closeCartBtn_0");
+const cartForm_0 = document.getElementById("cartForm_0");
+openBtn_0.addEventListener("click", () => cartForm_0.style.display = "block");
+closeBtn_0.addEventListener("click", () => cartForm_0.style.display = "none");
+
+const openBtn_2 = document.getElementById("openCartBtn_2");
+const closeBtn_2 = document.getElementById("closeCartBtn_2");
+const cartForm_2 = document.getElementById("cartForm_2");
+openBtn_2.addEventListener("click", () => cartForm_0.style.display = "block");
+closeBtn_2.addEventListener("click", () => cartForm_0.style.display = "none");
+</script>
+{% endblock %}

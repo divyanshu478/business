@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Raw Materials Management{% endblock %}
+
+{% block content %}
+<!-- Add Material Button -->
+<div class="section-header">
+    <h2>Raw Materials Management</h2>
+    <button type="button" class="btn btn-primary" id="openCartBtn">
+        📦 Add Raw Material
+    </button>
+</div>
+
+<!-- Cart / Modal Form -->
+<div id="cartForm" class="cart-form" style="display: none;">
+    <div class="cart-header">
+        <h3>Add Raw Material</h3>
+        <span id="closeCartBtn" style="cursor:pointer;">✖</span>
+    </div>
+    <form method="POST" action="{{ url_for('tasks.add_raw_material') }}">
+        <div class="form-group">
+            <label for="name">Item Name:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="date">Purchase Date:</label>
+            <input type="date" name="date" required value="{{ today }}">
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity" required>
+        </div>
+        <div class="form-group">
+            <label for="price">Price per unit:</label>
+            <input type="number" name="price" step="0.01" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">📦 Add Material</button>
+        </div>
+    </form>
+</div>
+
+  
+</section>
+
+<!-- Raw Materials Inventory -->
+<section class="inventory-section">
+    <div class="section-header">
+        <h2 style="color: #FF6B6B;">📊 Inventory Summary</h2>
+        <div class="filter-controls">
+            <form method="GET" action="{{ url_for('tasks.raw_materials') }}">
+                <input type="text" name="search" placeholder="Search materials..." 
+                       value="{{ request.args.get('search', '') }}">
+                <button type="submit" class="btn">Filter</button>
+                <a href="{{ url_for('tasks.raw_materials') }}" class="btn">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Inventory Summary -->
+<section class="inventory-summary">
+    <div class="summary-grid">
+        <div class="summary-card">
+            <h3>Total Value:</h3>
+            <span>₹{{ "{:,.2f}".format(total_inventory_value or 0) }}</span>
+        </div>
+        <div class="summary-card">
+            <h3>This Month Purchase:</h3>
+            <span>₹{{ "{:,.2f}".format(monthly_purchase or 0) }}</span>
+        </div>
+    </div>
+</section>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price/Unit</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for material in materials %}
+                    <tr>
+                        <td>{{ material.item }}</td>
+                        <td>{{ material.date.strftime('%d/%m/%Y') if material.date else '-' }}</td>
+                        <td>{{ material.quantity }}</td>
+                        <td>₹{{ "{:,.2f}".format(material.price or 0) }}</td>
+                        <td>₹{{ "{:,.2f}".format((material.quantity * material.price) if material.quantity and material.price else 0) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">No materials found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if materials_pagination and materials_pagination.pages > 1 %}
+    <div class="pagination">
+        {% if materials_pagination.has_prev %}
+            <a href="{{ url_for('tasks.raw_materials', page=materials_pagination.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+
+        {% for page_num in materials_pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num != materials_pagination.page %}
+                    <a href="{{ url_for('tasks.raw_materials', page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                    <strong>{{ page_num }}</strong>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if materials_pagination.has_next %}
+            <a href="{{ url_for('tasks.raw_materials', page=materials_pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+
+
+<!-- Low Stock Alert -->
+{% if low_stock_items %}
+<section class="low-stock-section">
+    <h2>⚠️ Low Stock Alert</h2>
+    <div class="alert-container">
+        {% for item in low_stock_items %}
+            <div class="alert-item">
+                <strong>{{ item.name }}</strong> - Only {{ item.quantity }} left
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

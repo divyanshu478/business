@@ -1,0 +1,138 @@
+#cartForm {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;  /* 👈 viewport ke 80% tak height allow karega */
+    overflow-y: auto;  /* 👈 scroll enable karega agar content zyada ho */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: none;
+    scrollbar-width: thin;  /* optional, scrollbar thoda slim karega */
+}
+
+#cartForm_1 {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;  /* 👈 viewport ke 80% tak height allow karega */
+    overflow-y: auto;  /* 👈 scroll enable karega agar content zyada ho */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: none;
+    scrollbar-width: thin;  /* optional, scrollbar thoda slim karega */
+}
+
+#cartForm_0 {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;  /* 👈 viewport ke 80% tak height allow karega */
+    overflow-y: auto;  /* 👈 scroll enable karega agar content zyada ho */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: none;
+    scrollbar-width: thin;  /* optional, scrollbar thoda slim karega */
+}
+
+
+#cartForm_2 {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;  /* 👈 viewport ke 80% tak height allow karega */
+    overflow-y: auto;  /* 👈 scroll enable karega agar content zyada ho */
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: none;
+    scrollbar-width: thin;  /* optional, scrollbar thoda slim karega */
+}
+/* ===========================
+   Responsive adjustments
+   =========================== */
+
+/* Tablets (≤ 992px) */
+@media (max-width: 992px) {
+  #cartForm {
+    left: 35%;
+    width: 280px;
+  }
+}
+
+/* Mobiles (≤ 768px) */
+@media (max-width: 768px) {
+  #cartForm {
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+  }
+}
+
+/* Very small phones (≤ 480px) */
+@media (max-width: 480px) {
+  #cartForm {
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    padding: 12px;
+  }
+}
+
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.cart-header h3 {
+    margin: 0;
+}
+
+.cart-header span {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+    cursor: pointer;
+}
+
+.cart-form .form-group {
+    margin-bottom: 10px;
+}
+
+.cart-form input, 
+.cart-form textarea {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
