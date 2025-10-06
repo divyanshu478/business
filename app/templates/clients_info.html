@@ -3,73 +3,82 @@
 {% block title %}Client Details - {{ client["name"] }}{% endblock %}
 
 {% block content %}
-<h1 style="font-size: 30px; color: #FF6B6B;">Client - {{ client["name"] }}</h1><br>
+<!-- Section Header -->
+<h1 class="section-title">Client - {{ client["name"] }}</h1>
 
-<!-- Summary Cards -->
-<div class="summary-grid">
-    <div class="summary-card">
-        <h3>Total Amount</h3>
-        <p>₹{{ "{:,.2f}".format(total_amount|default(0)) }}</p>
+<!-- Summary Cards (Raw Materials style) -->
+<section class="inventory-summary">
+    <div class="summary-grid">
+        <div class="summary-card">
+            <h3>Total Amount</h3>
+            <span>₹{{ "{:,.2f}".format(total_amount|default(0)) }}</span>
+        </div>
+        <div class="summary-card">
+            <h3>Due Amount</h3>
+            <span class="due">₹{{ "{:,.2f}".format(due_amount|default(0)) }}</span>
+        </div>
     </div>
-    <div class="summary-card">
-        <h3>Due Amount</h3>
-        <p>₹{{ "{:,.2f}".format(due_amount|default(0)) }}</p>
-    </div>
-</div>
+</section>
 
 <!-- Item Details Table -->
-<h2>Item Details</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Item</th>
-            <th>Description</th>
-            <th>Date</th>
-            <th>Quantity</th>
-            <th>Price/Gram</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in client["items"] %}
-        <tr>
-            <td>{{ item["item"]|default('-') }}</td>
-            <td>{{ item["description"] or '-----' }}</td>
-            <td>{{ item["date"]|default('-') }}</td>
-            <td>{{ item["quantity"]|default(0) }}</td>
-            <td>₹{{ "{:,.2f}".format(item["price"]|default(0)) }}</td>
-            <td>₹{{ "{:,.2f}".format(item["total_amount"]|default(0)) }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="6">No items found</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-<br>
-<br>
+<section class="inventory-table">
+    <h2>Item Details</h2>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Price/Gram</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in client["items"] %}
+                <tr>
+                    <td>{{ item["item"]|default('-') }}</td>
+                    <td>{{ item["description"] or '-----' }}</td>
+                    <td>{{ item["date"]|default('-') }}</td>
+                    <td>{{ item["quantity"]|default(0) }}</td>
+                    <td>₹{{ "{:,.2f}".format(item["price"]|default(0)) }}</td>
+                    <td>₹{{ "{:,.2f}".format(item["total_amount"]|default(0)) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6">No items found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 
 <!-- Payment Details Table -->
-<h2>Payment Details</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Mode</th>
-            <th>Description</th>
-            <th>Amount</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pay in client["payments"] %}
-        <tr>
-            <td>{{ pay["date"]|default('-') }}</td>
-            <td>{{ pay.get("mode", '-') }}</td>
-            <td>{{ pay["description"] or '----' }}</td>
-            <td>₹{{ "{:,.2f}".format(pay["amount"]|default(0)) }}</td>
-        </tr>
-        {% else %}
-        <tr><td colspan="4">No payments found</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<section class="inventory-table">
+    <h2>Payment Details</h2>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Mode</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pay in client["payments"] %}
+                <tr>
+                    <td>{{ pay["date"]|default('-') }}</td>
+                    <td>{{ pay.get("mode", '-') }}</td>
+                    <td>{{ pay["description"] or '----' }}</td>
+                    <td>₹{{ "{:,.2f}".format(pay["amount"]|default(0)) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4">No payments found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
 {% endblock %}
