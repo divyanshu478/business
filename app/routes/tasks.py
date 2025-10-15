@@ -198,8 +198,10 @@ def clear_filters():
 def add_raw_material():
     name = request.form.get('name')
     date_str = request.form.get('date')
-    quantity = request.form.get('quantity', type=int)
-    price = request.form.get('price', type=float)
+    # quantity = request.form.get('quantity', type=int)
+    # price = request.form.get('price', type=float)
+    quantity = float(request.form.get('quantity'))
+    price = float(request.form.get("price"))
 
     if not name or not date_str or quantity is None or price is None:
         flash("Please fill all required fields", "danger")
@@ -326,8 +328,8 @@ def add_client_order():
     item_name = request.form.get("item_name")
     description = request.form.get("description")
     order_date = request.form.get("date")
-    quantity = int(request.form.get("quantity"))
-    price = int(request.form.get("price"))
+    quantity = float(request.form.get("quantity"))
+    price = float(request.form.get("price"))
 
     cw = db.session.execute(
         text("SELECT cw_id FROM client_workers WHERE client_name = :name"), {"name": client_name}
@@ -362,8 +364,8 @@ def add_worker_work():
     item = request.form.get("item_name_1")
     description = request.form.get("description_1")
     work_date = request.form.get("date_1")
-    quantity = int(request.form.get("quantity_1"))
-    price = int(request.form.get("price_1"))
+    quantity = float(request.form.get("quantity_1"))
+    price = float(request.form.get("price_1"))
 
     cw = db.session.execute(
         text("SELECT cw_id FROM client_workers WHERE client_name = :name AND status='Worker'"),
