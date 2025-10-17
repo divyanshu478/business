@@ -89,50 +89,55 @@
 /* Mobiles (≤ 768px) */
 @media (max-width: 768px) {
   #cartForm {
-    top: 20%;
+    top: 10%; /* thoda upar le aao */
     left: 50%;
     transform: translateX(-50%);
-    width: 80%;
+    width: 85%;
+    max-height: 85vh;   /* 👈 scrollable height */
+    overflow-y: scroll;  /* 👈 scroll enable */
+    -webkit-overflow-scrolling: touch; /* 👈 smooth mobile scroll */
   }
 }
 
 /* Very small phones (≤ 480px) */
 @media (max-width: 480px) {
   #cartForm {
-    top: 25%;
+    top: 8%;
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
     padding: 12px;
+    max-height: 90vh;   /* 👈 full usable screen height */
+    overflow-y: scroll;
   }
 }
 
-
+/* Cart header & content */
 .cart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .cart-header h3 {
-    margin: 0;
+  margin: 0;
 }
 
 .cart-header span {
-    font-size: 18px;
-    font-weight: bold;
-    color: red;
-    cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: red;
+  cursor: pointer;
 }
 
 .cart-form .form-group {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
-.cart-form input, 
+.cart-form input,
 .cart-form textarea {
-    width: 100%;
-    padding: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 5px;
+  box-sizing: border-box;
 }
