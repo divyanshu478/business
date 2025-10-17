@@ -66,11 +66,11 @@
                 </div>
                 <div class="form-group">
                     <label for="quantity">Quantity:</label>
-                    <input type="number" id="quantity" name="quantity" min="1" required>
+                    <input type="number" step="any" id="quantity" name="quantity" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="price">Price per unit:</label>
-                    <input type="number" id="price" name="price" step="0.01" required>
+                    <input type="number" step="any" id="price" name="price" step="0.01" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">💼 Add Client Order</button>
@@ -160,11 +160,11 @@
                 </div>
                 <div class="form-group">
                     <label for="quantity_1">Quantity:</label>
-                    <input type="number" id="quantity_1" name="quantity_1" min="1" required>
+                    <input type="number" step="any" id="quantity_1" name="quantity_1" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="price_1">Rate per Unit:</label>
-                    <input type="number" id="price_1" name="price_1" required>
+                    <input type="number" step="any" id="price_1" name="price_1" required>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success">👷 Add Worker Work</button>
@@ -245,7 +245,8 @@
                     <li>No clients found</li>
                 {% endfor %}
             </ul>
-            <a><button>View All</button></a>
+            <a href="{{ url_for('tasks.all_clients') }}"><button>View All</button></a>
+            
         </div>
 
         <!-- Recent Workers -->
@@ -265,7 +266,7 @@
                     <li>No workers found</li>
                 {% endfor %}
             </ul>
-            <a><button>View All</button></a>
+            <a href="{{ url_for('tasks.all_workers') }}"><button>View All</button></a>
         </div>
     </div>
 </section>
@@ -302,7 +303,7 @@
             </tbody>
         </table>
     </div>
-    <a style="display: inline-block; padding: 10px 20px; background-color: #FF6B6B; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; text-align: center;" href="{{ url_for('tasks.raw_materials') }}">
+    <a style="display: inline-block; padding: 10px 20px; background-color: #FF6B6B; color: white; text-decoration: none; border-radius: 5px; text-align: center;" href="{{ url_for('tasks.raw_materials') }}">
         View All Material Details
     </a>
 </section>

@@ -1,11 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>The work is under process</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Worker Management{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>Worker Management</h2>
+    <button type="button" class="btn btn-primary" id="openCartBtn">
+        👥 Add Worker
+    </button>
+</div>
+
+<!-- Modal Form to Add Worker -->
+<div id="cartForm" class="cart-form" style="display: none;">
+    <div class="cart-header">
+        <h3>Add Worker</h3>
+        <span id="closeCartBtn" style="cursor:pointer;">✖</span>
+    </div>
+    <form method="POST" action="{{ url_for('tasks.add_worker') }}">
+        <div class="form-group">
+            <label for="name">Worker Name:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact Info:</label>
+            <input type="text" name="contact" placeholder="Email or Phone">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">👤 Add Worker</button>
+        </div>
+    </form>
+</div>
+
+<!-- Worker Summary -->
+<section class="inventory-section">
+    <div class="section-header">
+        <h2 style="color: #4ECDC4;">📋 Worker Summary</h2>
+        <div class="filter-controls">
+            <form method="GET" action="{{ url_for('tasks.all_workers') }}">
+                <input type="text" name="search" placeholder="Search Workers..." value="{{ search or '' }}">
+                <button type="submit" class="btn">Filter</button>
+                <a href="{{ url_for('tasks.all_workers') }}" class="btn">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <section class="inventory-summary">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Workers</h3>
+                <span>{{ total_workers or 0 }}</span>
+            </div>
+            <div class="summary-card">
+                <h3>Currently Blank</h3>
+                <span>--</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Worker Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Worker Name</th>
+                    <th>Due Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for worker in workers %}
+                    <tr>
+                        <td>
+                            <a style="text-decoration: none; font-size: 15px;"
+                               href="{{ url_for('tasks.show_worker', name=worker['name']) }}">
+                                <strong>{{ worker.name }}</strong>
+                            </a>
+                        </td>
+                        <td>₹{{ "{:,.2f}".format(worker.due_amount or 0) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No workers found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if workers_pagination.pages > 1 %}
+    <div class="pagination">
+        {% if workers_pagination.has_prev %}
+            <a href="{{ url_for('tasks.all_workers', page=workers_pagination.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+
+        {% for page_num in workers_pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == workers_pagination.page %}
+                    <strong>{{ page_num }}</strong>
+                {% else %}
+                    <a href="{{ url_for('tasks.all_workers', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if workers_pagination.has_next %}
+            <a href="{{ url_for('tasks.all_workers', page=workers_pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

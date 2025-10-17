@@ -1,11 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>The work is under process</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Client Management{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h2>Client Management</h2>
+    <button type="button" class="btn btn-primary" id="openCartBtn">
+        👥 Add Client
+    </button>
+</div>
+
+<!-- Modal Form to Add Client -->
+<div id="cartForm" class="cart-form" style="display: none;">
+    <div class="cart-header">
+        <h3>Add Client</h3>
+        <span id="closeCartBtn" style="cursor:pointer;">✖</span>
+    </div>
+    <form method="POST" action="{{ url_for('tasks.add_client') }}">
+        <div class="form-group">
+            <label for="name">Client Name:</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="contact">Contact Info:</label>
+            <input type="text" name="contact" placeholder="Email or Phone">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">👤 Add Client</button>
+        </div>
+    </form>
+</div>
+
+<!-- Client Summary -->
+<section class="inventory-section">
+    <div class="section-header">
+        <h2 style="color: #4ECDC4;">📋 Client Summary</h2>
+        <div class="filter-controls">
+            <form method="GET" action="{{ url_for('tasks.all_clients') }}">
+                <input type="text" name="search" placeholder="Search clients..." value="{{ search or '' }}">
+                <button type="submit" class="btn">Filter</button>
+                <a href="{{ url_for('tasks.all_clients') }}" class="btn">Clear</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <section class="inventory-summary">
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>Total Clients</h3>
+                <span>{{ total_clients or 0 }}</span>
+            </div>
+            <div class="summary-card">
+                <h3>Currently Blank</h3>
+                <span>--</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Client Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Client Name</th>
+                    <th>Due Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                    <tr>
+                        <td>
+                            <a style="text-decoration: none; font-size: 15px;"
+                               href="{{ url_for('tasks.show_client', name=client['name']) }}">
+                                <strong>{{ client.name }}</strong>
+                            </a>
+                        </td>
+                        <td>₹{{ "{:,.2f}".format(client.due_amount or 0) }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="2">No clients found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if clients_pagination.pages > 1 %}
+    <div class="pagination">
+        {% if clients_pagination.has_prev %}
+            <a href="{{ url_for('tasks.all_clients', page=clients_pagination.prev_num) }}">&laquo; Previous</a>
+        {% endif %}
+
+        {% for page_num in clients_pagination.iter_pages() %}
+            {% if page_num %}
+                {% if page_num == clients_pagination.page %}
+                    <strong>{{ page_num }}</strong>
+                {% else %}
+                    <a href="{{ url_for('tasks.all_clients', page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if clients_pagination.has_next %}
+            <a href="{{ url_for('tasks.all_clients', page=clients_pagination.next_num) }}">Next &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

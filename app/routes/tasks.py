@@ -13,6 +13,7 @@ from app.models import (
 
 task_bp = Blueprint('tasks', __name__)
 
+
 # ===================== 🔐 LOGIN CHECK DECORATOR =====================
 def login_required(view_func):
     """Protect routes: redirect to login if not logged in"""
@@ -65,7 +66,7 @@ def dashboard():
             ) p ON cw.cw_id = p.cw_id
             WHERE cw.status='Client'
             ORDER BY due_amount DESC
-            LIMIT 4
+            LIMIT 2
         """)
     ).mappings().all()
 
@@ -93,7 +94,7 @@ def dashboard():
             ) p ON cw.cw_id = p.cw_id
             WHERE cw.status='Worker'
             ORDER BY remaining_amount DESC
-            LIMIT 4
+            LIMIT 2
         """)
     ).mappings().all()
 
@@ -115,8 +116,8 @@ def dashboard():
     material_list = [
         {
             "name": m["item"],
-            # "date": datetime.strptime(m["date"], "%Y-%m-%d") if m["date"] else None,
-            "date": m["date"] if m["date"] else None,
+            "date": datetime.strptime(m["date"], "%Y-%m-%d") if m["date"] else None,
+            # "date": m["date"] if m["date"] else None,
             "quantity": m["quantity"],
             "price": m["price"],
             "amount": m["amount"],
@@ -142,16 +143,6 @@ def dashboard():
 # =====================================================================
 # =========================== OTHER ROUTES ============================
 # =====================================================================
-
-@task_bp.route("/all_worker")
-@login_required
-def all_worker():
-    return render_template("all_worker_details.html")
-
-@task_bp.route("/all_clients")
-@login_required
-def all_client():
-    return render_template("all_client_details.html")
 
 
 # ---------- Raw Materials ----------
@@ -199,10 +190,8 @@ def clear_filters():
 def add_raw_material():
     name = request.form.get('name')
     date_str = request.form.get('date')
-    # quantity = request.form.get('quantity', type=int)
-    # price = request.form.get('price', type=float)
-    quantity = float(request.form.get('quantity'))
-    price = float(request.form.get("price"))
+    quantity = request.form.get('quantity', type=int)
+    price = request.form.get('price', type=float)
 
     if not name or not date_str or quantity is None or price is None:
         flash("Please fill all required fields", "danger")
@@ -471,3 +460,148 @@ def add_worker_payment():
 
     flash("✅ Worker payment added successfully!", "success")
     return redirect(url_for("tasks.dashboard"))
+
+
+
+# ---------------- ALL CLIENTS PAGE ----------------
+@task_bp.route("/all_clients")
+@login_required
+def all_clients():
+
+    page = request.args.get("page", 1, type=int)
+    search = request.args.get("search", "").strip()
+
+    query = client_workers.query.filter_by(status="Client")
+    if search:
+        query = query.filter(client_workers.client_name.ilike(f"%{search}%"))
+    
+    recent_clients = db.session.execute(
+        text("""
+            SELECT 
+            cw.client_name,
+            COALESCE(o.total_orders,0) - COALESCE(p.total_payments,0) AS due_amount
+            FROM client_workers cw
+            LEFT JOIN (
+            SELECT cw_id, SUM(total_amount) AS total_orders
+            FROM client__order__details
+            GROUP BY cw_id
+            ) o ON cw.cw_id = o.cw_id
+            LEFT JOIN (
+            SELECT cw_id, SUM(amount) AS total_payments
+            FROM client_payment_details
+            GROUP BY cw_id
+            ) p ON cw.cw_id = p.cw_id
+            WHERE cw.status='Client'
+            
+        """)
+    ).mappings().all()
+
+    # Pagination
+    clients_pagination = query.order_by(client_workers.client_name.asc()).paginate(page=page, per_page=8)
+    clients_list = [{"name": c.client_name, "due_amount": c.due_amount} for c in recent_clients]  # placeholder due
+
+    total_clients = query.count()
+    
+
+    return render_template(
+        "all_client_details.html",
+        clients=clients_list,
+        clients_pagination=clients_pagination,
+        total_clients=total_clients,
+        search=search
+    )
+
+
+# ---------------- ADD NEW CLIENT ----------------
+@task_bp.route("/add_client", methods=["POST"])
+@login_required
+def add_client():
+    name = request.form.get("name")
+    contact = request.form.get("contact")  # optional
+
+    if not name:
+        flash("Client name is required!", "danger")
+        return redirect(url_for("tasks.all_clients"))
+
+    try:
+        new_client = client_workers(client_name=name, status="Client")
+        db.session.add(new_client)
+        db.session.commit()
+        flash(f"Client '{name}' added successfully!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"⚠️ Error adding client: {e}", "danger")
+
+    return redirect(url_for("tasks.all_clients"))
+
+
+
+# ---------------- ALL WORKERS PAGE ----------------
+@task_bp.route("/all_workers")
+@login_required
+def all_workers():
+
+    page = request.args.get("page", 1, type=int)
+    search = request.args.get("search", "").strip()
+
+    query = client_workers.query.filter_by(status="Worker")
+    if search:
+        query = query.filter(client_workers.client_name.ilike(f"%{search}%"))
+    
+    recent_workers = db.session.execute(
+        text("""
+            SELECT 
+            cw.client_name,
+            COALESCE(o.total_orders,0) - COALESCE(p.total_payments,0) AS remaining_amount
+            FROM client_workers cw
+            LEFT JOIN (
+            SELECT cw_id, SUM(total_amount) AS total_orders
+            FROM worker_work__details
+            GROUP BY cw_id
+            ) o ON cw.cw_id = o.cw_id
+            LEFT JOIN (
+            SELECT cw_id, SUM(amount) AS total_payments
+            FROM worker__payment__details
+            GROUP BY cw_id
+            ) p ON cw.cw_id = p.cw_id
+            WHERE cw.status='Worker'
+        """)
+    ).mappings().all()
+
+    # Pagination
+    workers_pagination = query.order_by(client_workers.client_name.asc()).paginate(page=page, per_page=8)
+    workers_list = [{"name": w.client_name, "due_amount": w.remaining_amount} for w in recent_workers]  # placeholder due
+
+    total_workers = query.count()
+    
+
+    return render_template(
+        "all_worker_details.html",
+        workers=workers_list,
+        workers_pagination=workers_pagination,
+        total_workers=total_workers,
+        search=search
+    )
+
+
+# ---------------- ADD NEW CLIENT ----------------
+@task_bp.route("/add_worker", methods=["POST"])
+@login_required
+def add_worker():
+    name = request.form.get("name")
+    contact = request.form.get("contact")  # optional
+
+    if not name:
+        flash("Client name is required!", "danger")
+        return redirect(url_for("tasks.all_workers"))
+
+    try:
+        new_worker = client_workers(client_name=name, status="Worker")
+        db.session.add(new_worker)
+        db.session.commit()
+        flash(f"Worker '{name}' added successfully!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"⚠️ Error adding Worker: {e}", "danger")
+
+    return redirect(url_for("tasks.all_workers"))
