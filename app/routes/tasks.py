@@ -116,8 +116,8 @@ def dashboard():
     material_list = [
         {
             "name": m["item"],
-            "date": datetime.strptime(m["date"], "%Y-%m-%d") if m["date"] else None,
-            # "date": m["date"] if m["date"] else None,
+            # "date": datetime.strptime(m["date"], "%Y-%m-%d") if m["date"] else None,
+            "date": m["date"] if m["date"] else None,
             "quantity": m["quantity"],
             "price": m["price"],
             "amount": m["amount"],
