@@ -1,10 +1,10 @@
 from flask import Flask, request, redirect, url_for, session, render_template, flash, Blueprint
-
+import os
 auth_bp = Blueprint('auth', __name__)
 
 user_credential = {
-     'username' :'admin',
-     'password' :'kumawat'
+     'username' : os.environ.get("USERNAME"),
+     'password' :os.environ.get("PASSWORD")
 }
 
 
