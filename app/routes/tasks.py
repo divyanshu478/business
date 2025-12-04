@@ -491,7 +491,7 @@ def all_clients():
             FROM client_payment_details
             GROUP BY cw_id
             ) p ON cw.cw_id = p.cw_id
-            WHERE cw.status='Client'
+            WHERE cw.status='Client order by due_amount'
             
         """)
     ).mappings().all()
